@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class HelloApplication extends Application {
     @Override
@@ -19,26 +20,8 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) {
         launch();
-
-
     }
 }
 
-class Bmi {
-    private float height, weight;
 
-    public Bmi(float height, float weight) {
-        this.height = height;
-        this.weight = weight;
-    }
-    public float getBMI() {
-        return weight / this.height / this.height * 10000;
-    }
-    public float getHeight() {
-        return height;
-    }
-    @Override
-    public String toString () {
-        return "Bmi =" + String.format("%. 1f", getBMI()) + " ";
-    }
-}
+
