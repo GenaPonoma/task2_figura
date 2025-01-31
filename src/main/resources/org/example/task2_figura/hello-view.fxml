@@ -1,27 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.Canvas?>
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.task2_figura.HelloController">
+    <!-- Панель инструментов -->
+    <Label text="Графический редактор" style="-fx-font-size: 16; -fx-padding: 10;"/>
+    <Button text="Очистить" style="-fx-padding: 10;"/>
 
-<VBox spacing="10" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.task2_figura.HelloController">
-    <!-- Верхняя часть с элементами управления -->
-    <VBox spacing="10" style="-fx-padding: 10;">
-        <!-- Метка с подсказкой для пользователя -->
-        <Label text="Введите цифру от 1 до 5 для выбора фигуры:" />
-
-        <!-- Текстовое поле для ввода цифры -->
-        <TextField fx:id="inputField" promptText="Введите цифру" />
-
-        <!-- Метка с инструкцией -->
-        <Label text="1 - Круг, 2 - Угол, 3 - Квадрат, 4 - Линия, 5 - Пятиугольник" />
-
-        <!-- Кнопка для отрисовки фигуры -->
-        <Button onAction="#handleDrawButtonAction" text="Нарисовать" />
-    </VBox>
-
-    <!-- Canvas для отображения фигур -->
-    <Canvas fx:id="canvas" height="437.0" width="890.0" VBox.vgrow="ALWAYS" />
+    <!-- Панель для рисования -->
+    <Pane fx:id="drawingPane" style="-fx-background-color: lightgray; -fx-pref-height: 400; -fx-pref-width: 600;"/>
 </VBox>

@@ -1,54 +1,76 @@
 package org.example.task2_figura;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 
 import javafx.scene.input.MouseEvent;
 
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+
 public class HelloController {
-
     @FXML
-    private TextField inputField;
+    private Pane drawingPane; // Панель для рисования
 
-    @FXML
-    private Canvas canvas;
+    private Memento temp; // Временное хранилище для текущей фигуры
+    private MemoSelect memoSelect = new MemoSelect(); // Управление множеством состояний
 
+    // Инициализация стартового набора фигур
+    public void initialize() {
+        Circle circle = new Circle(100, 100, 50);
+        Rectangle rectangle = new Rectangle(200, 200, 100, 100);
 
+        drawingPane.getChildren().addAll(circle, rectangle);
 
-    // Метод для проверки ввода с использованием регулярного выражения
-    private boolean checkWithRegExp(String input) {
-        return input.matches("[1-5]"); // Проверка, что введено число от 1 до 5
-    }
-    @FXML
-    private void handleDrawButtonAction() {
-        GraphicsContext gr = canvas.getGraphicsContext2D();
-
-        // Проверка ввода
-        if (!checkWithRegExp(inputField.getText()) || inputField.getText().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Предупреждение");
-            alert.setHeaderText(null);
-            alert.setContentText("Введено не число или число не из диапазона от 1 до 5!");
-            alert.showAndWait();
-            return;
+        // Добавляем обработчики событий для каждой фигуры
+        for (var node : drawingPane.getChildren()) {
+            if (node instanceof Shape) {
+                Shape shape = (Shape) node;
+                shape.setOnMousePressed(this::onBegin);
+                shape.setOnMouseDragged(this::onDrag);
+                shape.setOnMouseReleased(this::onEnd);
+            }
         }
+    }
 
-        // Получение числа из текстового поля
-        int numberOfSides = Integer.parseInt(inputField.getText());
+    // Обработчик начала перетаскивания
+    public void onBegin(MouseEvent event) {
+        if (event.getSource() instanceof Shape) {
+            Shape shape = (Shape) event.getSource();
+            temp = new Memento(shape); // Создаем снимок состояния
+            memoSelect.push(temp); // Сохраняем состояние в Caretaker
+            temp.initState().toFront(); // Выделяем фигуру
+        }
+    }
 
-        // Создание фигуры с помощью фабрики
-        ShapeFactory shapeFactory = new ShapeFactory();
-        Shape shape = shapeFactory.createShape(numberOfSides);
+    // Обработчик перетаскивания
+    public void onDrag(MouseEvent event) {
+        if (temp == null) return;
+        Shape shape = temp.initState();
 
-        // Очистка Canvas и отрисовка фигуры
-        gr.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        shape.draw(gr);
+        // Получаем координаты мыши относительно панели
+        double mouseX = event.getX();
+        double mouseY = event.getY();
+
+        // Перемещаем фигуру так, чтобы её центр был под курсором
+        shape.setLayoutX(mouseX - shape.getBoundsInLocal().getWidth() / 2);
+        shape.setLayoutY(mouseY - shape.getBoundsInLocal().getHeight() / 2);
+    }
+
+    // Обработчик завершения перетаскивания
+    public void onEnd(MouseEvent event) {
+        if (temp == null) return;
+        Shape shape = temp.getState(); // Восстанавливаем состояние
+
+        // Получаем координаты мыши относительно панели
+        double mouseX = event.getX();
+        double mouseY = event.getY();
+
+        // Устанавливаем финальное положение фигуры
+        shape.setLayoutX(mouseX - shape.getBoundsInLocal().getWidth() / 2);
+        shape.setLayoutY(mouseY - shape.getBoundsInLocal().getHeight() / 2);
+
+        temp = null; // Сбрасываем временное хранилище
     }
 }
